@@ -17,6 +17,9 @@ for (let [first, second] of pageOrder) {
     }
 }
 
+// ----------------------------------------------------------------------------------------//
+// Uncomment for part one
+
 // let result = 0;
 
 // for (let i = 0; i < printOrder.length; i++) {
@@ -38,6 +41,8 @@ for (let [first, second] of pageOrder) {
 //         }
 //     }
 // }
+
+// ----------------------------------------------------------------------------------------//
 
 let result = 0;
 
