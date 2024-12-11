@@ -50,34 +50,58 @@ function defragmentDisk (decodedMap) {
 }
 
 function optimizedDefragment (decodedMap) {
-    let spaceMapper = new Map();
+    let spaceStore = [];
 
-    for (let i = 0; i < decodedMap.length; i++) { 
+    for (let i = 0; i < decodedMap.length; i++) {
         if (decodedMap[i] === '.') {
             let start = i;
-            while (decodedMap[start] === '.') {
+            while(decodedMap[start] === '.') {
                 start++;
             }
-            
-            let space = start - i;
 
-            if (spaceMapper.has(space)) {
-                spaceMapper.get(space).push(i);
-            } else {
-                spaceMapper.set(space, [i]);
-            }
+            spaceStore.push({index: i, space: start - i});
             i = start;
         }
     }
 
-    
+    let fileId = decodedMap.at(-1);
+
+    for (let i = decodedMap.length - 1; i >= 0 ; i--) {
+        if (fileId === '.') continue;
+
+        let start = i;
+        while (decodedMap.at(start) === fileId) {
+            start--;
+        }
+        
+        let fileLength = i - start;
+
+        let position = spaceStore.find(el => el.space >= fileLength);
+
+        if (position !== undefined && position.index < i) {
+            for (let x = i; x > start; x--) {
+                decodedMap[position.index++] = decodedMap[x];
+                decodedMap[x] = '.';
+
+                position.space--;
+            }
+        }
+
+        if (decodedMap.at(start) !== fileId) {
+            while (decodedMap.at(start) === '.') {
+                start--;
+            }
+            fileId = decodedMap.at(start);
+            i = start + 1;
+        }
+    }
 
     return decodedMap;
 } 
 
 function checkSum (input) {
     let decodedMap = decodeMap(input);
-    let defragmentedMap = defragmentDisk(decodedMap);
+    let defragmentedMap = optimizedDefragment(decodedMap);
 
      return defragmentedMap.reduce((acc, val, index) => {
         if (val === '.') {
